@@ -53,7 +53,7 @@
   amp-selector .select-option.no-outline.no-outline[option] {
     outline: none;
   }
-  .select-option:focus {
+  .active, .select-option:focus {
     box-shadow: inset rgb(94, 158, 215) 0px 0px 45px;
   }
   .select-option:focus {
@@ -65,6 +65,15 @@
   </style>
 </head>
 <body>
+<amp-state id="data"
+           src="/form/autosuggest/query"
+           [src]="'/form/autosuggest/query?q=' + (autosuggest || '')">
+  <script type="application/json">
+    {
+
+    }
+  </script>
+</amp-state>
   <h1>Programming language search</h1>
   <form
     method="post"
@@ -85,7 +94,12 @@
             autosuggest: event.value
           }),
           autosuggest-list.show,
-          results.hide"
+          results.hide;
+          input-key-down:AMP.setState({
+            index: event.keyCode == 40 ? (index < data.total - 1 ? index + 1 : 0) :
+              event.keyCode == 38 ? (index > 0 ? index - 1 : data.total - 1) : 0,
+              show: true
+            });"
         [value]="query || ''"
       />
       <button class="search-submit" type="submit">Search</button>
@@ -95,10 +109,11 @@
       layout="fixed-height"
       height="120"
       src="/form/autosuggest/query"
-      [src]="'/form/autosuggest/query?q=' + (autosuggest || '')"
+      [state]="data.items"
       id="autosuggest-list"
       hidden
     >
+      <span [text]="data.total"></span>
       <template type="amp-mustache">
         <amp-selector
           keyboard-select-mode="focus"
@@ -112,11 +127,12 @@
           {{#results}}
             <div
               class="select-option no-outline"
+              [class]="'select-option no-outline '.concat(index == {{index}} ? 'active' : '')"
               role="option"
               tabindex="0"
               on="tap:autosuggest-list.hide"
-              option="{{.}}"
-            >{{.}}</div>
+              option="{{name}}"
+            >{{name}}</div>
           {{/results}}
           {{^results.3}}<div class="select-option"></div>{{/results.3}}
           {{^results.2}}<div class="select-option"></div>{{/results.2}}

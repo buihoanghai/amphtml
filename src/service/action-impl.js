@@ -202,6 +202,7 @@ export class ActionService {
     this.addEvent('change');
     this.addEvent('input-debounced');
     this.addEvent('input-throttled');
+    this.addEvent('input-key-down');
     this.addEvent('valid');
     this.addEvent('invalid');
   }
@@ -271,6 +272,18 @@ export class ActionService {
       }, DEFAULT_THROTTLE_INTERVAL);
 
       this.root_.addEventListener('input', event => {
+        const deferredEvent = new DeferredEvent(event);
+        this.addTargetPropertiesAsDetail_(deferredEvent);
+        throttledInput(deferredEvent);
+      });
+    } else if (name == 'input-key-down') {
+      const throttledInput = throttle(this.ampdoc.win, event => {
+        const target = dev().assertElement(event.target);
+        this.trigger(target, name, /** @type {!ActionEventDef} */ (event),
+            ActionTrust.HIGH);
+      }, DEFAULT_THROTTLE_INTERVAL);
+
+      this.root_.addEventListener('keydown', event => {
         const deferredEvent = new DeferredEvent(event);
         this.addTargetPropertiesAsDetail_(deferredEvent);
         throttledInput(deferredEvent);
@@ -558,7 +571,9 @@ export class ActionService {
   addTargetPropertiesAsDetail_(event) {
     const detail = /** @type {!JsonObject} */ (map());
     const target = event.target;
-
+    if (event.keyCode !== undefined) {
+      detail['keyCode'] = event.keyCode;
+    }
     if (target.value !== undefined) {
       detail['value'] = target.value;
     }

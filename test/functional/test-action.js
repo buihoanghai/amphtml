@@ -1209,6 +1209,27 @@ describes.fakeWin('Core events', {amp: true}, env => {
           }));
     });
   });
+  it('should trigger input-key-down event on input', () => {
+    sandbox.stub(action, 'invoke_');
+    const handler = window.document.addEventListener.getCall(6).args[1];
+    const element = document.createElement('input');
+    element.id = 'test';
+    element.setAttribute('on', 'input-key-down:test.hide');
+    element.value = 'foo bar baz';
+    const event = {target: element};
+    document.body.appendChild(element);
+    handler(event);
+
+    return triggerPromise.then(() => {
+      expect(action.trigger).to.have.been.calledWith(
+          element,
+          'input-key-down',
+          sinon.match(event => {
+            const value = event.target.value;
+            return value == 'foo bar baz';
+          }));
+    });
+  });
 
   describe('DeferredEvent', () => {
     it('should copy the properties of an event object', () => {
