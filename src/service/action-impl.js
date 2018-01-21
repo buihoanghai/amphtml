@@ -202,7 +202,7 @@ export class ActionService {
     this.addEvent('change');
     this.addEvent('input-debounced');
     this.addEvent('input-throttled');
-    this.addEvent('input-keydown');
+    this.addEvent('keydown');
     this.addEvent('valid');
     this.addEvent('invalid');
   }
@@ -276,7 +276,7 @@ export class ActionService {
         this.addTargetPropertiesAsDetail_(deferredEvent);
         throttledInput(deferredEvent);
       });
-    } else if (name == 'input-keydown') {
+    } else if (name == 'keydown') {
       const throttledInput = throttle(this.ampdoc.win, event => {
         const target = dev().assertElement(event.target);
         this.trigger(target, name, /** @type {!ActionEventDef} */ (event),
