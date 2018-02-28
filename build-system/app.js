@@ -230,32 +230,18 @@ app.use('/form/autosuggest/query', (req, res) => {
   const MAX_RESULTS = 4;
   const query = req.query.q;
   if (!query) {
-    const items = autosuggestLanguages.slice(0, MAX_RESULTS);
-    res.json({
-      items: [{results: addIndex(items)}],
-      total: items.length,
-    });
+    res.json({ items: [{
+      results: autosuggestLanguages.slice(0, MAX_RESULTS)},
+    ]});
   } else {
     const lowerCaseQuery = query.toLowerCase();
     const filtered = autosuggestLanguages.filter(
         l => l.toLowerCase().includes(lowerCaseQuery));
-    const items = filtered.slice(0, MAX_RESULTS);
-    res.json({
-      items: [{results: addIndex(items)}],
-      total: items.length,
-    });
+    res.json({items: [{
+      results: filtered.slice(0, MAX_RESULTS)},
+    ]});
   }
 });
-function addIndex(arr) {
-  const result = [];
-  for (let i = 0; i < arr.length; i++) {
-    result.push({
-      index: i,
-      name: arr[i],
-    });
-  }
-  return result;
-}
 
 app.use('/form/autosuggest/search', (req, res) => {
   assertCors(req, res, ['POST']);

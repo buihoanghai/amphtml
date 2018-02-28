@@ -113,6 +113,10 @@ export class AmpSelector extends AMP.BaseElement {
       this.element.addEventListener('click', this.clickHandler_.bind(this));
       this.element.addEventListener('keydown', this.keyDownHandler_.bind(this));
     }
+
+    this.registerAction('navigate', invocation => {
+      this.navigationKeyDownHandler_(invocation['event']);
+    }, ActionTrust.HIGH);
   }
 
   /** @override */
@@ -370,7 +374,7 @@ export class AmpSelector extends AMP.BaseElement {
         return;
     }
 
-    event.preventDefault();
+    //event.preventDefault();
 
     // Make currently selected option unfocusable
     this.options_[this.focusedIndex_].tabIndex = -1;

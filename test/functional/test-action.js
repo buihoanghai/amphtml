@@ -1209,12 +1209,12 @@ describes.fakeWin('Core events', {amp: true}, env => {
           }));
     });
   });
-  it('should trigger key-down event on input', () => {
+  it('should trigger keydown event on input', () => {
     sandbox.stub(action, 'invoke_');
     const handler = window.document.addEventListener.getCall(5).args[1];
     const element = document.createElement('input');
     element.id = 'test';
-    element.setAttribute('on', 'key-down:test.hide');
+    element.setAttribute('on', 'keydown:test.hide');
     element.value = 'foo bar baz';
     const event = {target: element};
     document.body.appendChild(element);
@@ -1223,10 +1223,10 @@ describes.fakeWin('Core events', {amp: true}, env => {
     return triggerPromise.then(() => {
       expect(action.trigger).to.have.been.calledWith(
           element,
-          'key-down',
+          'keydown',
           sinon.match(event => {
-            const keyCode = event.keyCode;
-            return keyCode == 70;
+            const value = event.target.value;
+            return value == 'foo bar baz';
           }));
     });
   });
